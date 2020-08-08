@@ -48,11 +48,13 @@ class UserHolder {
     u.addFriend(friends);
   }
 
-  String capitalize(String s) {
-    return s.capitalize(s);
-  }
-
   User getUserByLogin(String login) {
     return users[login];
+  }
+}
+
+class UserUtils {
+  String capitalize(String s) {
+    return s.capitalize(s);
   }
 }
