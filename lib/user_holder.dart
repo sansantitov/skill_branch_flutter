@@ -51,6 +51,17 @@ class UserHolder {
   User getUserByLogin(String login) {
     return users[login];
   }
+
+  List<User> importUsers(List<String> s) {
+    RegExp exp = RegExp(r"[;]"); //;
+    List<User> users = [];
+    s.forEach((u) {
+      List<String> ss = u.split('\n');
+      users.add(registerUser(ss[0].replaceAll(exp, "").trim(),
+          ss[2].replaceAll(exp, "").trim(), ss[1].replaceAll(exp, "").trim()));
+    });
+    return users;
+  }
 }
 
 class UserUtils {
