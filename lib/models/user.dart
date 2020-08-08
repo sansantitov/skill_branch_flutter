@@ -1,8 +1,8 @@
 import '../string_util.dart';
 
-enum LoginType {email, phone};
+enum LoginType { email, phone }
 
-class  User {
+class User {
   String email;
   String phone;
 
@@ -13,26 +13,29 @@ class  User {
   List<User> friends = <User>[];
 
   User._({String firstName, String lastName, String phone, String email})
-  : _firstName = firstName,
-    _lastName = lastName,
-    this.phone = phone,
-    this.email = email {
-      print("User is created");
-      _type = email!=null?LoginType.email:LoginType.phone;
+      : _firstName = firstName,
+        _lastName = lastName,
+        this.phone = phone,
+        this.email = email {
+    print("User is created");
+    _type = email != null ? LoginType.email : LoginType.phone;
   }
 
   User.__(String name) {
     this._lastName = name;
   }
 
-  factory User({String name,String phone,String email}) {
-    if (name.isEmpty) throw Exception("User name is Empty");
-    if (phone.isEmpty || email.isEmpty) throw Exception("User phine or emeil is empty");
+  factory User({String name, String phone, String email}) {
+    if (name == null || name.isEmpty) throw Exception("User name is Empty");
+    /*  if (phone.isEmpty || email.isEmpty) */
+    if ((phone ?? "" + email ?? "").isEmpty)
+      throw Exception("User phone and email is empty");
+
     return User._(
       firstName: _getFirstName(name),
       lastName: _getLastName(name),
-      phone: checkPhone(phone),
-      email: checkEmail(email),
+      phone: phone == null || phone.isEmpty ? null : checkPhone(phone),
+      email: email == null || email.isEmpty ? null : checkEmail(email),
     );
   }
 
@@ -43,48 +46,49 @@ class  User {
     String pattern = r"^(?:[+0])?[0-9]{11}";
 
     phone = phone.replaceAll(RegExp("[^+\\d]"), "");
-    if (phone==null || phone.isEmpty) {
+    if (phone == null || phone.isEmpty) {
       throw Exception("Enter don't empty phone number");
-    }  else if (!RegExp(pattern).hasMatch(phone)) {
-      throw Exception("Enter a valid phone number staring a + and containing 11 digits");
+    } else if (!RegExp(pattern).hasMatch(phone)) {
+      throw Exception(
+          "Enter a valid phone number staring a + and containing 11 digits");
     }
     return phone;
   }
 
   static String checkEmail(String email) {
     //string pattern =
-    if (email==null || email.isEmpty) {
+    if (email == null || email.isEmpty) {
       throw Exception("Enter don't empty email");
     }
+
+    if (!email.contains("@")) throw Exception("Email is not valid");
 
     return email;
   }
 
   String get login {
-    if (_type == LoginType.phone) return phone;
-    else return email;
+    if (_type == LoginType.phone)
+      return phone;
+    else
+      return email;
   }
 
   String get name => "${"".capitalize(_firstName)} ${"".capitalize(_lastName)}";
 
   @override
-  bool operator==(Object object) {
-    if (object==null) {
-      return false;
-    }
+  bool operator ==(Object object) {
+    if (object == null) return false;
     if (object is User) {
-      return _firstName == object._firstName && 
-       _lastName == object._lastName &&
-       (phone == object.phone || email == object.email) 
+      return _firstName == object._firstName &&
+          _lastName == object._lastName &&
+          (phone == object.phone || email == object.email);
     }
-
-
   }
 
   void addFriend(Iterable<User> newFriend) {
-    friends.add(newFriend);
+    friends.addAll(newFriend);
   }
-  
+
   void removeFriend(User user) {
     friends.remove(user);
   }
@@ -97,21 +101,13 @@ class  User {
     friends: ${friends.toList()}
     \\n
     ''';
-    @override
-    String toString() {
-      return """
+  @override
+  String toString() {
+    return """
       '
       name: $name
       email: $email
       friends: ${friends.toList()}
       """;
-
-    }
-
-
-
-
-
-
-
+  }
 }
